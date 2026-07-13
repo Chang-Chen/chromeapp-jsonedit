@@ -13,11 +13,21 @@ const options = {
 const search = new URLSearchParams(window.location.search)
 const mode = [...search.keys()][0] || ''
 const editor = new JSONEditor(container, options)
+function parseJsonText(text) {
+  if (!text) return null
+  try {
+    return JSON.parse(text)
+  } catch (e) {
+    return null
+  }
+}
+
 function loadText(text) {
   if (text) {
-    try {
-      editor.set(JSON.parse(text))
-    } catch (e) {
+    const parsed = parseJsonText(text)
+    if (parsed !== null) {
+      editor.set(parsed)
+    } else {
       editor.setText(text)
     }
   } else {
@@ -56,7 +66,12 @@ async function init() {
         json = ''
       } else if ('clipboard' == mode) {
         json = await readClipboard()
-        loadText(json)
+        if (parseJsonText(json) !== null) {
+          loadText(json)
+        } else {
+          json = await localforage.getItem(jsonkey) || ''
+          loadText(json)
+        }
         return
       }
     }catch(e) {
