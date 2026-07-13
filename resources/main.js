@@ -10,35 +10,60 @@ const options = {
   },
 }
 
-const mode = window.location.search.substring(1)
+const search = new URLSearchParams(window.location.search)
+const mode = [...search.keys()][0] || ''
 const editor = new JSONEditor(container, options)
+function loadText(text) {
+  if (text) {
+    try {
+      editor.set(JSON.parse(text))
+    } catch (e) {
+      editor.setText(text)
+    }
+  } else {
+    editor.setText(text)
+  }
+}
+
+function readClipboard() {
+  return new Promise((resolve) => {
+    if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({}, function (response) {
+        resolve(response && response.clipboard ? response.clipboard : '')
+      })
+      return
+    }
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      navigator.clipboard.readText().then(resolve).catch(() => resolve(''))
+      return
+    }
+    resolve('')
+  })
+}
+
 async function init() {
   let json = ''
   try {
     try{
       // 获取url后面的json字符串
-      if (!mode || mode == '') {
+      if (search.has('text') || search.has('json')) {
+        json = decodeURIComponent((search.get('text') || search.get('json') || '').replace(/\+/g, ' '))
+      } else if (search.has('base64')) {
+        json = atob(search.get('base64') || '')
+      } else if (!mode || mode == '') {
         json = await localforage.getItem(jsonkey) || json
       } else if ('none' == mode) {
         json = ''
       } else if ('clipboard' == mode) {
-        chrome.runtime.sendMessage({}, function (response){
-          json = response.clipboard;
-          try {
-            editor.set(JSON.parse(json))
-          } catch(e) { }
-        });
+        json = await readClipboard()
+        loadText(json)
         return
       }
     }catch(e) {
      json = await localforage.getItem(jsonkey) || json
     }
   } catch (e) { }
-  if (json) { 
-    editor.set(json)
-  } else {
-    editor.setText(json)
-  }
+  loadText(json)
 }
 init()
 

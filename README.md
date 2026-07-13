@@ -30,7 +30,7 @@
 5. 在chrome中打开 `chrome://apps` ，找到“JsonEditor” 单击打开
 6. 打开url中可以追加 `?clipboard` 自动加载剪切板里的json
 7. \[可选\] 方便以后进入，建议打开后，添加到收藏夹
-8. \[可选\] 可以配合安装 [alfred插件](https://github.com/sunzsh/favoritesWorkflow4Alfred/blob/main/jsonEditor.alfredworkflow) 快速打开（支持按住command自动加载剪切板内json）
+8. \[可选\] 可以配合安装 [alfred插件](https://github.com/sunzsh/favoritesWorkflow4Alfred/blob/main/jsonEditor.alfredworkflow) 快速打开（支持按住 command 自动把剪贴板内容传给编辑器）
 
 ## 特别鸣谢
 * ★★★ 没有 [Jos de Jong](https://github.com/josdejong) 开源的 [josdejong/jsoneditor](https://github.com/josdejong/jsoneditor) ，就不会有这个小工具
