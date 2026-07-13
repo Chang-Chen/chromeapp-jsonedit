@@ -26,5 +26,5 @@
 	},
 	
 	"omnibox": { "keyword" : "json" },
-	"content_security_policy": "script-src-elem 'self' data:;  object-src 'self'; script-src 'self'"
+	"content_security_policy": "script-src-elem 'self'; object-src 'self'; script-src 'self'"
 }
